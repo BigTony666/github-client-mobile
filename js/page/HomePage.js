@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import {createBottomTabNavigator} from "react-navigation";
 import {StyleSheet, Text, View} from 'react-native';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import PopularPage from './PopularPage';
 import MyPage from './MyPage';
 import FavoritePage from './FavoritePage';
@@ -14,24 +16,52 @@ export default class HomePage extends Component<Props> {
         screen: PopularPage,
         navigationOptions: {
           tabBarLabel: "Popular",
+          tabBarIcon: ({tintColor, focused}) => (
+            <FontAwesome5
+              name={'hotjar'}
+              size={26}
+              style={{color: tintColor}}
+            />
+          ),
         }
       },
       TrendingPage: {
         screen: TrendingPage,
         navigationOptions: {
           tabBarLabel: "Trending",
+          tabBarIcon: ({tintColor, focused}) => (
+            <MaterialIcons
+              name={'trending-up'}
+              size={26}
+              style={{color: tintColor}}
+            />
+          ),
         }
       },
       FavoritePage: {
         screen: FavoritePage,
         navigationOptions: {
           tabBarLabel: "Favorite",
+          tabBarIcon: ({tintColor, focused}) => (
+            <MaterialIcons
+              name={'favorite'}
+              size={26}
+              style={{color: tintColor}}
+            />
+          ),
         }
       },
       MyPage: {
         screen: MyPage,
         navigationOptions: {
           tabBarLabel: "My",
+          tabBarIcon: ({tintColor, focused}) => (
+            <FontAwesome5
+              name={'user-alt'}
+              size={26}
+              style={{color: tintColor}}
+            />
+          ),
         }
       },
     });
