@@ -2,11 +2,13 @@ import {
   createStackNavigator,
   createMaterialTopTabNavigator,
 } from "react-navigation";
+import {connect} from 'react-redux';
+import {createReactNavigationReduxMiddleware, reduxifyNavigator} from 'react-navigation-redux-helpers';
+
+import DataStoreDemoPage from '../page/DataStoreDemoPage';
 import WelcomePage from '../page/WelcomePage';
 import HomePage from '../page/HomePage';
 import DetailPage from '../page/DetailPage';
-import {connect} from 'react-redux';
-import {createReactNavigationReduxMiddleware, reduxifyNavigator} from 'react-navigation-redux-helpers';
 export const rootCom = 'Init'; // root navigator
 
 const InitNavigator = createStackNavigator({
@@ -27,6 +29,11 @@ const MainNavigator = createStackNavigator({
   },
   DetailPage: {
     screen: DetailPage,
+    navigationOptions: {
+    }
+  },
+  DataStoreDemoPage: {
+    screen: DataStoreDemoPage,
     navigationOptions: {
     }
   },
