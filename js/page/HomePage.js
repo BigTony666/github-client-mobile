@@ -1,33 +1,49 @@
-import React, {Component} from 'react';
-import {createBottomTabNavigator} from "react-navigation";
-import {StyleSheet, Text, View} from 'react-native';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import PopularPage from './PopularPage';
-import MyPage from './MyPage';
-import FavoritePage from './FavoritePage';
-import TrendingPage from './TrendingPage';
+import React, { Component } from 'react';
+import { NavigationActions } from "react-navigation";
+import { connect } from 'react-redux';
 import NavigationUtil from '../navigator/NavigationUtil';
-import DynamicTabNavigator from "../navigator/DynamicTabNavigator"
+import DynamicTabNavigator from "../navigator/DynamicTabNavigator";
+import BackPressComponent from "../common/BackPressComponent";
+import actions from "../action";
+
+
 type Props = {};
-export default class HomePage extends Component<Props> {
+class HomePage extends Component<Props> {
+
+  constructor(props) {
+    super(props);
+    this.backPress = new BackPressComponent({ backPress: this.onBackPress });
+  }
+
+  componentDidMount() {
+    this.backPress.componentDidMount();
+  }
+
+  componentWillUnmount() {
+    this.backPress.componentWillUnmount();
+  }
+
+  onBackPress = () => {
+    const { dispatch, nav } = this.props;
+    if (nav.routes[1].index === 0) {
+      return false;
+    }
+    dispatch(NavigationActions.back());
+    return true;
+  };
 
   render() {
     NavigationUtil.navigation = this.props.navigation;
-    return <DynamicTabNavigator></DynamicTabNavigator>
+    return <DynamicTabNavigator />
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
+const mapStateToProps = state => ({
+  nav: state.nav,
 });
+
+const mapDispatchToProps = dispatch => ({
+
+});
+
+export default connect(mapStateToProps)(HomePage);

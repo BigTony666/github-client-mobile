@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {createBottomTabNavigator} from "react-navigation";
+import {connect} from 'react-redux';
 import NavigationUtil from '../navigator/NavigationUtil';
 import PopularPage from '../page/PopularPage';
 import TrendingPage from '../page/TrendingPage';
@@ -66,7 +67,7 @@ const TABS = {
   },
 };
 
-export default class DynamicTabNavigator extends Component<Props> {
+ class DynamicTabNavigator extends Component<Props> {
   constructor(props) {
     super(props);
     console.disableYellowBox = true;
@@ -79,15 +80,16 @@ export default class DynamicTabNavigator extends Component<Props> {
     const { PopularPage, TrendingPage, FavoritePage, MyPage } = TABS;
     const tabs = { PopularPage, TrendingPage, FavoritePage, MyPage };
     PopularPage.navigationOptions.tabBarLabel = 'Popular';
-    return createBottomTabNavigator(
+    return this.Tabs = createBottomTabNavigator(
       tabs,
     {
-      tabBarComponent: TabBarComponent,
+      tabBarComponent: props => {
+        return <TabBarComponent theme={this.props.theme} {...props}/>
+      }
     });
   }
 
   render() {
-    NavigationUtil.navigation = this.props.navigation;
     const Tab = this._tabNavigator();
     return <Tab/>
   }
@@ -103,18 +105,15 @@ class TabBarComponent extends React.Component {
   }
 
   render() {
-    const {routes, index} = this.props.navigation.state;
-    if(routes[index].params) {
-      const {theme} = routes[index].params;
-      if(theme && theme.updateTime > this.theme.updateTime) {
-        this.theme = theme;
-      }
-    }
     return <BottomTabBar
       {...this.props}
-      activeTintColor={this.theme.tintColor || this.props.activeTintColor}
+      activeTintColor={this.props.theme}
     />
   }
 }
 
+const mapStateToProps = state => ({
+  theme: state.theme.theme,
+});
 
+export default connect(mapStateToProps)(DynamicTabNavigator);
