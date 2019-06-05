@@ -3,7 +3,8 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default class PopularItem extends Component {
   render() {
-    const { item } = this.props;
+    const {projectModel} = this.props;
+    const {item} = projectModel;
     if (!item || !item.owner) {
       return null;
     }

@@ -5,6 +5,7 @@ import {
 } from 'react-navigation';
 import NavigationUtil from '../navigator/NavigationUtil';
 import { connect } from 'react-redux';
+import Toast from 'react-native-easy-toast';
 
 import actions from '../action/index';
 import globalConfig from '../config';
@@ -69,10 +70,31 @@ class PopularTab extends Component<Props> {
     this.loadData();
   }
 
-  loadData() {
-    const { onRefreshPopular } = this.props;
+  _store() {
+    const { popular } = this.props;
+    let store = popular[this.storeName];
+    if (!store) {
+      store = {
+        items: [],
+        isLoading: false,
+        projectModels: [], // data that will be show
+        hideLoadingMore: true, // default to hide load more
+      }
+    }
+    return store;
+  }
+
+  loadData(loadMore) {
+    const { onRefreshPopular, onLoadMorePopular } = this.props;
+    const store = this._store();
     const url = this.genFetchUrl(this.storeName);
-    onRefreshPopular(this.storeName, url);
+    if (loadMore) {
+      onLoadMorePopular(this.storeName, ++store.pageIndex, pageSize, store.items, callback => {
+        this.refs.toast.show('No More');
+      })
+    } else {
+      onRefreshPopular(this.storeName, url, pageSize);
+    }
   }
 
   genFetchUrl(key) {
@@ -84,7 +106,7 @@ class PopularTab extends Component<Props> {
   renderItem(data) {
     const item = data.item;
     return <PopularItem
-      item={item}
+      projectModel={item}
       onSelect={() => {
 
       }}
@@ -92,25 +114,14 @@ class PopularTab extends Component<Props> {
   }
 
   render() {
-    const { tabLabel, popular } = this.props;
-    let store = popular[this.storeName];
-    if(!store) {
-      store = {
-        items: [],
-        isLoading: false,
-      }
-    }
+    const { popular } = this.props;
+    let store = this._store();
     return (
       <View style={styles.container}>
-        {/* <Text onPress={() => {
-          NavigationUtil.goPage({
-            navigation: this.props.navigation,
-          }, "DetailPage")
-        }}>More Detail</Text> */}
         <FlatList
-          data={store.items}
+          data={store.projectModels}
           renderItem={(data) => this.renderItem(data)}
-          keyExtractor={(item) => "" + item.id}
+          keyExtractor={(item) => "" + item.item.id}
           refreshControl={
             <RefreshControl
               title={'Loading'}
@@ -121,6 +132,10 @@ class PopularTab extends Component<Props> {
               tintColor={THEME_COLOR}
             />
           }
+        />
+        <Toast
+          ref={'toast'}
+          position={'center'}
         />
       </View>
     );
@@ -149,7 +164,8 @@ const mapStateToProps = state => ({
   popular: state.popular
 });
 const mapDispatchToProps = dispatch => ({
-  onRefreshPopular: (storeName, url) => dispatch(actions.onRefreshPopular(storeName, url)),
+  onRefreshPopular: (storeName, url, pageSize) => dispatch(actions.onRefreshPopular(storeName, url, pageSize)),
+  onLoadMorePopular: (storeName, pageIndex, pageSize, items, callBack) => dispatch(actions.onLoadMorePopular(storeName, pageIndex, pageSize, items, callBack)),
 });
 
 const PopularTabPage = connect(mapStateToProps, mapDispatchToProps)(PopularTab);
