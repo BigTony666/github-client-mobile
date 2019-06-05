@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View, Button} from 'react-native';
 import {
   createMaterialTopTabNavigator
 } from 'react-navigation';
@@ -61,6 +61,14 @@ class PopularTab extends Component<Props> {
             navigation: this.props.navigation,
           }, "DetailPage")
         }}>More Detail</Text>
+        <Button
+          title={"DataStore 使用"}
+          onPress={() => {
+            NavigationUtil.goPage({
+              navigation: this.props.navigation
+            }, "DataStoreDemoPage")
+          }}
+      />
       </View>
     );
   }

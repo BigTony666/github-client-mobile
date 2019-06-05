@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, TextInput, View} from 'react-native';
-import DataStore from '../expand/dao/DataStore'
+import DataStore, {FLAG_STORAGE} from '../expand/dao/DataStore';
 
 type Props = {};
 const KEY = "save_key";
@@ -10,12 +10,12 @@ export default class DataStoreDemoPage extends Component<Props> {
         this.state = {
             showText: ''
         }
-        this.dataDtore = new DataStore();
+        this.dataStore = new DataStore();
     }
 
     loadData() {
         let url = `https://api.github.com/search/repositories?q=${this.value}`;
-        this.dataDtore.fetchData(url)
+        this.dataStore.fetchData(url, FLAG_STORAGE.flag_popular)
             .then(data => {
                 let showData = `初次数据加载时间：${new Date(data.timestamp)}\n${JSON.stringify(data.data)}`;
                 this.setState({
