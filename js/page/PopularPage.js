@@ -5,8 +5,10 @@ import {
 } from 'react-navigation';
 import NavigationUtil from '../navigator/NavigationUtil';
 import { connect } from 'react-redux';
+
 import actions from '../action/index';
 import globalConfig from '../config';
+import PopularItem from '../common/PopularItem';
 
 const THEME_COLOR = 'red';
 
@@ -81,11 +83,12 @@ class PopularTab extends Component<Props> {
 
   renderItem(data) {
     const item = data.item;
-    return <View style={{marginBottom: 10}}>
-      <Text style={{backgroundColor: '#faa'}}>
-        {JSON.stringify(item)}
-      </Text>
-    </View>
+    return <PopularItem
+      item={item}
+      onSelect={() => {
+
+      }}
+    />
   }
 
   render() {
@@ -99,7 +102,6 @@ class PopularTab extends Component<Props> {
     }
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}> {tabLabel} </Text>
         {/* <Text onPress={() => {
           NavigationUtil.goPage({
             navigation: this.props.navigation,
@@ -128,14 +130,6 @@ class PopularTab extends Component<Props> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
   },
   tabStyle: {
     minWidth: 50
