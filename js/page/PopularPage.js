@@ -1,9 +1,14 @@
-import React, {Component} from 'react';
-import {StyleSheet, Text, View, Button} from 'react-native';
+import React, { Component } from 'react';
+import { StyleSheet, Text, View, Button, FlatList, RefreshControl } from 'react-native';
 import {
   createMaterialTopTabNavigator
 } from 'react-navigation';
 import NavigationUtil from '../navigator/NavigationUtil';
+import { connect } from 'react-redux';
+import actions from '../action/index';
+import globalConfig from '../config';
+
+const THEME_COLOR = 'red';
 
 type Props = {};
 export default class PopularPage extends Component<Props> {
@@ -16,7 +21,7 @@ export default class PopularPage extends Component<Props> {
     const tabs = {};
     this.tabNames.forEach((item, index) => {
       tabs[`tab${index}`] = {
-        screen: props => <PopularTab {...props} tabLabel = {item}/>,
+        screen: props => <PopularTabPage {...props} tabLabel={item} />,
         navigationOptions: {
           title: item,
         },
@@ -43,32 +48,78 @@ export default class PopularPage extends Component<Props> {
     );
 
     return (
-      <View style={{flex: 1, marginTop: 30}}>
-        <TabNavigator/>
+      <View style={{ flex: 1, marginTop: 30 }}>
+        <TabNavigator />
       </View>
     );
   }
 }
 
+const pageSize = 10;
 class PopularTab extends Component<Props> {
+  constructor(props) {
+    super(props);
+    const { tabLabel } = this.props;
+    this.storeName = tabLabel;
+  }
+
+  componentDidMount() {
+    this.loadData();
+  }
+
+  loadData() {
+    const { onRefreshPopular } = this.props;
+    const url = this.genFetchUrl(this.storeName);
+    onRefreshPopular(this.storeName, url);
+  }
+
+  genFetchUrl(key) {
+    return globalConfig.GITHUB_SEARCH_REPOSITORY_URL +
+      key +
+      globalConfig.GITHUB_SEARCH_REPOSITORY_QUERY_STR;
+  }
+
+  renderItem(data) {
+    const item = data.item;
+    return <View style={{marginBottom: 10}}>
+      <Text style={{backgroundColor: '#faa'}}>
+        {JSON.stringify(item)}
+      </Text>
+    </View>
+  }
+
   render() {
-    const {tabLabel} = this.props;
+    const { tabLabel, popular } = this.props;
+    let store = popular[this.storeName];
+    if(!store) {
+      store = {
+        items: [],
+        isLoading: false,
+      }
+    }
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}> {tabLabel} </Text>
-        <Text onPress={() => {
+        {/* <Text onPress={() => {
           NavigationUtil.goPage({
             navigation: this.props.navigation,
           }, "DetailPage")
-        }}>More Detail</Text>
-        <Button
-          title={"DataStore 使用"}
-          onPress={() => {
-            NavigationUtil.goPage({
-              navigation: this.props.navigation
-            }, "DataStoreDemoPage")
-          }}
-      />
+        }}>More Detail</Text> */}
+        <FlatList
+          data={store.items}
+          renderItem={(data) => this.renderItem(data)}
+          keyExtractor={(item) => "" + item.id}
+          refreshControl={
+            <RefreshControl
+              title={'Loading'}
+              titleColor={THEME_COLOR}
+              colors={[THEME_COLOR]}
+              refreshing={store.isLoading}
+              onRefresh={() => this.loadData()}
+              tintColor={THEME_COLOR}
+            />
+          }
+        />
       </View>
     );
   }
@@ -99,3 +150,12 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   }
 });
+
+const mapStateToProps = state => ({
+  popular: state.popular
+});
+const mapDispatchToProps = dispatch => ({
+  onRefreshPopular: (storeName, url) => dispatch(actions.onRefreshPopular(storeName, url)),
+});
+
+const PopularTabPage = connect(mapStateToProps, mapDispatchToProps)(PopularTab);
