@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Button, FlatList, RefreshControl } from 'react-native';
+import { StyleSheet, Text, View, Button, FlatList, RefreshControl, ActivityIndicator } from 'react-native';
 import {
   createMaterialTopTabNavigator
 } from 'react-navigation';
@@ -113,6 +113,16 @@ class PopularTab extends Component<Props> {
     />
   }
 
+  genIndicator() {
+    return this._store().hideLoadingMore ? null :
+      <View style={styles.indicatorContainer}>
+        <ActivityIndicator
+          style={styles.indicator}
+        />
+        <Text>Loading More</Text>
+      </View>
+  }
+
   render() {
     const { popular } = this.props;
     let store = this._store();
@@ -132,6 +142,21 @@ class PopularTab extends Component<Props> {
               tintColor={THEME_COLOR}
             />
           }
+          ListFooterComponent={() => this.genIndicator()}
+          onEndReached={() => {
+            console.log('---onEndReached----');
+            setTimeout(() => {
+              if (this.canLoadMore) { // https://github.com/facebook/react-native/issues/14015
+                this.loadData(true);
+                this.canLoadMore = false;
+              }
+            }, 200);
+          }}
+          onEndReachedThreshold={0.5}
+          onMomentumScrollBegin={() => {
+              this.canLoadMore = true;
+              console.log('---onMomentumScrollBegin-----')
+          }}
         />
         <Toast
           ref={'toast'}
@@ -157,6 +182,17 @@ const styles = StyleSheet.create({
     fontSize: 13,
     marginTop: 6,
     marginBottom: 6,
+  },
+  indicatorStyle: {
+    height: 2,
+    backgroundColor: 'white'
+  },
+  indicatorContainer: {
+    alignItems: "center"
+  },
+  indicator: {
+    color: 'red',
+    margin: 10
   }
 });
 

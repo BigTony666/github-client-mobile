@@ -28,7 +28,7 @@ export default class PopularItem extends Component {
               />
             </View>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-              <Text>Start:</Text>
+              <Text>Stars:</Text>
               <Text>{item.stargazers_count}</Text>
             </View>
             {/* {this._favoriteIcon()} */}
