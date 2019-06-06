@@ -4,7 +4,8 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import TimeSpan from '../model/TimeSpan';
 
 export const TimeSpans = [new TimeSpan('Today', 'since=daily'),
-    new TimeSpan('This Week', 'since=weekly'), new TimeSpan('This Month', 'since=monthly')]
+    new TimeSpan('This Week', 'since=weekly'), new TimeSpan('This Month', 'since=monthly')];
+
 export default class TrendingDialog extends Component {
     state = {
         visible: false,
@@ -28,6 +29,7 @@ export default class TrendingDialog extends Component {
                 transparent={true}
                 visible={this.state.visible}
                 onRequestClose={() => onClose}
+                animationType='fade'
             >
                 <TouchableOpacity
                     style={styles.container}
