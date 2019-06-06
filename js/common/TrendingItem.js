@@ -11,7 +11,10 @@ export default class TrendingItem extends Component {
         let description = '<p>' + item.description + '</p>';
         return (
             <TouchableOpacity
-                onPress={() => this.onItemClick()}
+                // onPress={() => {
+                //     //this.onItemClick()
+                // }}
+                onPress={this.props.onSelect}
             >
                 <View style={styles.cell_container}>
                     <Text style={styles.title}>
