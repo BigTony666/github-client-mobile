@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Button, FlatList, RefreshControl, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, Button, FlatList, RefreshControl, ActivityIndicator, DeviceInfo } from 'react-native';
 import {
   createMaterialTopTabNavigator
 } from 'react-navigation';
@@ -54,7 +54,8 @@ export default class PopularPage extends Component<Props> {
           upperCaseLabel: false,
           scrollEnabled: true,
           style: {
-            backgroundColor: '#678'
+            backgroundColor: '#678',
+            height: 30
           },
           indicatorStyle: styles.indicatorStyle,
           labelStyle: styles.labelStyle,
@@ -63,7 +64,7 @@ export default class PopularPage extends Component<Props> {
     );
 
     return (
-      <View style={{ flex: 1, marginTop: 30 }}>
+      <View style={{ flex: 1, marginTop: DeviceInfo.isIPhoneX_deprecated ? 30 : 0 }}>
         {navigationBar}
         <TabNavigator />
       </View>
@@ -185,16 +186,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   tabStyle: {
-    minWidth: 50
-  },
-  indicatorStyle: {
-    height: 2,
-    backgroundColor: 'white'
+    // minWidth: 50
+    padding: 0
   },
   labelStyle: {
     fontSize: 13,
-    marginTop: 6,
-    marginBottom: 6,
+    margin: 0,
   },
   indicatorStyle: {
     height: 2,

@@ -1,17 +1,18 @@
 import { AsyncStorage } from 'react-native';
+import Trending from 'GitHubTrending';
 
 export const FLAG_STORAGE = { flag_popular: 'popular', flag_trending: 'trending' };
 
 export default class DataStore {
 
   _wrapData(data) {
-    return {data: data, timestamp: new Date().getTime()};
-}
+    return { data: data, timestamp: new Date().getTime() };
+  }
 
   saveData(url, data, callback) {
     if (!data || !url) return;
     AsyncStorage.setItem(url, JSON.stringify(this._wrapData(data)), callback);
-}
+  }
 
   fetchLocalData(url) {
     return new Promise((resolve, reject) => {
@@ -73,7 +74,17 @@ export default class DataStore {
             reject(error);
           })
       } else {
-        // TODO: trending part
+        new Trending().fetchTrending(url)
+          .then(items => {
+            if (!items) {
+              throw new Error('responseData is null');
+            }
+            this.saveData(url, items);
+            resolve(items);
+          })
+          .catch(error => {
+            reject(error);
+          })
       }
     })
   }
@@ -82,7 +93,7 @@ export default class DataStore {
     const currentDate = new Date();
     const targetDate = new Date();
     targetDate.setTime(timestamp);
-    
+
     return (currentDate.getMonth() === targetDate.getMonth()) &&
       (currentDate.getDate() === targetDate.getDate()) &&
       (currentDate.getHours() - targetDate.getHours() < 1);

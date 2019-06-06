@@ -85,6 +85,9 @@ const TABS = {
     {
       tabBarComponent: props => {
         return <TabBarComponent theme={this.props.theme} {...props}/>
+      },
+      tabBarOptions: {
+        showLabel: false,
       }
     });
   }
