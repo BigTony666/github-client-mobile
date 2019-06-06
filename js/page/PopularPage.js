@@ -10,8 +10,9 @@ import Toast from 'react-native-easy-toast';
 import actions from '../action/index';
 import globalConfig from '../config';
 import PopularItem from '../common/PopularItem';
+import NavigationBar from '../common/NavigationBar';
 
-const THEME_COLOR = 'red';
+const THEME_COLOR = '#678';
 
 type Props = {};
 export default class PopularPage extends Component<Props> {
@@ -34,6 +35,17 @@ export default class PopularPage extends Component<Props> {
   }
 
   render() {
+    let statusBar = {
+      backgroundColor: THEME_COLOR,
+      barStyle: 'light-content',
+    }
+
+    let navigationBar = <NavigationBar
+      title={'Popular'}
+      statusBar={statusBar}
+      style={{backgroundColor: THEME_COLOR}}
+    />;
+
     const TabNavigator = createMaterialTopTabNavigator(
       this._genTabs(),
       {
@@ -52,6 +64,7 @@ export default class PopularPage extends Component<Props> {
 
     return (
       <View style={{ flex: 1, marginTop: 30 }}>
+        {navigationBar}
         <TabNavigator />
       </View>
     );
@@ -154,8 +167,8 @@ class PopularTab extends Component<Props> {
           }}
           onEndReachedThreshold={0.5}
           onMomentumScrollBegin={() => {
-              this.canLoadMore = true;
-              console.log('---onMomentumScrollBegin-----')
+            this.canLoadMore = true;
+            console.log('---onMomentumScrollBegin-----')
           }}
         />
         <Toast

@@ -1,5 +1,8 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {connect} from 'react-redux';
+import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import NavigationBar from '../common/NavigationBar';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 type Props = {};
 export default class MyPage extends Component<Props> {
