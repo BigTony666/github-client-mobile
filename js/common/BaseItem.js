@@ -35,7 +35,7 @@ export default class BaseItem extends Component {
         this.props.projectModel.isFavorite = isFavorite;
         this.setState({
             isFavorite: isFavorite,
-        })
+        });
     }
 
     onItemClick() {
@@ -46,11 +46,11 @@ export default class BaseItem extends Component {
 
     onPressFavorite() {
         this.setFavoriteState(!this.state.isFavorite);
-        this.props.onFavorite(this.props.projectModel.item, !this.state.isFavorite)
+        this.props.onFavorite(this.props.projectModel.item, !this.state.isFavorite);
     }
 
     _favoriteIcon() {
-        const {theme} = this.props;
+        // const {theme} = this.props;
         return <TouchableOpacity
             style={{padding: 6}}
             underlayColor='transparent'
@@ -58,7 +58,7 @@ export default class BaseItem extends Component {
             <FontAwesome
                 name={this.state.isFavorite ? 'star' : 'star-o'}
                 size={26}
-                style={{color: theme.themeColor}}
+                style={{color: '#678'}}
             />
         </TouchableOpacity>
     }

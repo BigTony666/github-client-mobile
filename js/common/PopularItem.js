@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import BaseItem from "./BaseItem";
 
-export default class PopularItem extends Component {
+export default class PopularItem extends BaseItem {
   render() {
     const {projectModel} = this.props;
     const {item} = projectModel;
@@ -31,7 +32,7 @@ export default class PopularItem extends Component {
               <Text>Stars:</Text>
               <Text>{item.stargazers_count}</Text>
             </View>
-            {/* {this._favoriteIcon()} */}
+            {this._favoriteIcon()}
           </View>
         </View>
       </TouchableOpacity>

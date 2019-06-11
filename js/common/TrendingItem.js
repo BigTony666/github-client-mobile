@@ -3,7 +3,7 @@ import {Image, StyleSheet, Text, TouchableOpacity, View,} from 'react-native'
 import HTMLView from 'react-native-htmlview';
 import BaseItem from "./BaseItem";
 
-export default class TrendingItem extends Component {
+export default class TrendingItem extends BaseItem {
     render() {
         const {projectModel} = this.props;
         const {item} = projectModel;
@@ -44,7 +44,7 @@ export default class TrendingItem extends Component {
                             })}
 
                         </View>
-                        {/* {this._favoriteIcon()} */}
+                        {this._favoriteIcon()}
                     </View>
                 </View>
 
