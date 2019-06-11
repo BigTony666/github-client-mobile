@@ -49,3 +49,25 @@ export function onLoadMorePopular(storeName, pageIndex, pageSize, dataArray = []
         }, 500);
     }
 }
+
+/**
+ * Refresh Favorite State
+ * @param {String} storeName 
+ * @param {int} pageIndex 
+ * @param {int} pageSize 
+ * @param {} dataArray 
+ * @param {Object} favoriteDao 
+ */
+export function onFlushPopularFavorite(storeName, pageIndex, pageSize, dataArray = [], favoriteDao) {
+    return dispatch => {
+        let max = pageSize * pageIndex > dataArray.length ? dataArray.length : pageSize * pageIndex;
+        _projectModels(dataArray.slice(0, max), favoriteDao, data => {
+            dispatch({
+                type: Types.FLUSH_POPULAR_FAVORITE,
+                storeName,
+                pageIndex,
+                projectModels: data,
+            })
+        })
+    }
+}

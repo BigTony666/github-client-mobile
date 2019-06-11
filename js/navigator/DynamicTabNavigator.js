@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
-import {createBottomTabNavigator} from "react-navigation";
-import {connect} from 'react-redux';
-import NavigationUtil from '../navigator/NavigationUtil';
+import {DeviceEventEmitter} from 'react-native';
+import { createBottomTabNavigator } from "react-navigation";
+import { connect } from 'react-redux';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { BottomTabBar } from 'react-navigation-tabs';
+
 import PopularPage from '../page/PopularPage';
 import TrendingPage from '../page/TrendingPage';
 import FavoritePage from '../page/FavoritePage';
 import MyPage from '../page/MyPage';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {BottomTabBar} from 'react-navigation-tabs';
+import events from '../event/types';
 
 type Props = {};
 
@@ -67,7 +69,7 @@ const TABS = {
   },
 };
 
- class DynamicTabNavigator extends Component<Props> {
+class DynamicTabNavigator extends Component<Props> {
   constructor(props) {
     super(props);
     console.disableYellowBox = true;
@@ -82,19 +84,26 @@ const TABS = {
     PopularPage.navigationOptions.tabBarLabel = 'Popular';
     return this.Tabs = createBottomTabNavigator(
       tabs,
-    {
-      tabBarComponent: props => {
-        return <TabBarComponent theme={this.props.theme} {...props}/>
-      },
-      tabBarOptions: {
-        showLabel: false,
-      }
-    });
+      {
+        tabBarComponent: props => {
+          return <TabBarComponent theme={this.props.theme} {...props} />
+        },
+        tabBarOptions: {
+          showLabel: false,
+        }
+      });
   }
 
   render() {
     const Tab = this._tabNavigator();
-    return <Tab/>
+    return <Tab
+      onNavigationStateChange={(prevState, newState, action) => {
+        DeviceEventEmitter.emit(events.BOTTOM_TAB_SELECT, {
+          from: prevState.index,
+          to: newState.index
+        })
+      }}
+    />
   }
 }
 

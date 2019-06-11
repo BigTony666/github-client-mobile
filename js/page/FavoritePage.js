@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Button, FlatList, RefreshControl, ActivityIndicator, DeviceInfo } from 'react-native';
+import { StyleSheet, Text, View, Button, FlatList, RefreshControl, DeviceEventEmitter, DeviceInfo } from 'react-native';
 import {
   createMaterialTopTabNavigator
 } from 'react-navigation';
@@ -14,6 +14,7 @@ import NavigationBar from '../common/NavigationBar';
 import FavoriteDao from "../expand/dao/FavoriteDao";
 import FavoriteUtil from "../util/FavoriteUtil";
 import { FLAG_STORAGE } from "../expand/dao/DataStore";
+import events from '../event/types';
 
 const THEME_COLOR = '#678';
 const favoriteDao = new FavoriteDao(FLAG_STORAGE.flag_popular);
@@ -99,6 +100,17 @@ class FavoriteTab extends Component<Props> {
 
   componentDidMount() {
     this.loadData(true);
+    this.bottomTabListener = DeviceEventEmitter.addListener(events.BOTTOM_TAB_SELECT, (data) => {
+      if (data.to === 2) {
+        this.loadData(false);
+      }
+    })
+  }
+
+  componentWillUnmount() {
+    if (this.bottomTabListener) {
+      this.bottomTabListener.remove();
+    }
   }
 
   _store() {
@@ -119,6 +131,15 @@ class FavoriteTab extends Component<Props> {
     onLoadFavoriteData(this.storeName, isShowLoading)
   }
 
+  onFavorite(item, isFavorite) {
+    FavoriteUtil.onFavorite(this.favoriteDao, item, isFavorite, this.props.flag);
+    if (this.storeName === FLAG_STORAGE.flag_popular) {
+      DeviceEventEmitter.emit(events.FAVORITE_CHANGED_POPULAR);
+    } else {
+      DeviceEventEmitter.emit(events.FAVORITE_CHANGED_TRENDING);
+    }
+  }
+
   renderItem(data) {
     const item = data.item;
     const Item = this.storeName === FLAG_STORAGE.flag_popular ? PopularItem : TrendingItem;
@@ -131,7 +152,7 @@ class FavoriteTab extends Component<Props> {
           callback,
         }, 'DetailPage')
       }}
-      onFavorite={(item, isFavorite) => FavoriteUtil.onFavorite(favoriteDao, item, isFavorite, this.storeName)}
+      onFavorite={(item, isFavorite) => this.onFavorite(item, isFavorite)}
     />
   }
 
