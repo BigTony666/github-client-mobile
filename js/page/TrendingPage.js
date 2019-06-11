@@ -14,7 +14,11 @@ import TrendingItem from '../common/TrendingItem';
 import NavigationBar from '../common/NavigationBar';
 import TrendingDialog, { TimeSpans } from '../common/TrendingDialog';
 import events from '../event/types';
+import FavoriteDao from "../expand/dao/FavoriteDao";
+import FavoriteUtil from "../util/FavoriteUtil";
+import {FLAG_STORAGE} from "../expand/dao/DataStore";
 
+const favoriteDao = new FavoriteDao(FLAG_STORAGE.flag_trending);
 const THEME_COLOR = '#678';
 
 type Props = {};
@@ -187,6 +191,7 @@ class TrendingTab extends Component<Props> {
           projectModel: item,
         }, 'DetailPage')
       }}
+      onFavorite={(item, isFavorite) => FavoriteUtil.onFavorite(favoriteDao, item, isFavorite, FLAG_STORAGE.flag_trending)}
     />
   }
 
@@ -273,8 +278,8 @@ const mapStateToProps = state => ({
   trending: state.trending
 });
 const mapDispatchToProps = dispatch => ({
-  onRefreshTrending: (storeName, url, pageSize) => dispatch(actions.onRefreshTrending(storeName, url, pageSize)),
-  onLoadMoreTrending: (storeName, pageIndex, pageSize, items, callBack) => dispatch(actions.onLoadMoreTrending(storeName, pageIndex, pageSize, items, callBack)),
+  onRefreshTrending: (storeName, url, pageSize, favoriteDao) => dispatch(actions.onRefreshTrending(storeName, url, pageSize, favoriteDao)),
+  onLoadMoreTrending: (storeName, pageIndex, pageSize, items, favoriteDao, callBack) => dispatch(actions.onLoadMoreTrending(storeName, pageIndex, pageSize, items, favoriteDao, callBack)),
 });
 
 const TrendingTabPage = connect(mapStateToProps, mapDispatchToProps)(TrendingTab);

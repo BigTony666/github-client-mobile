@@ -11,8 +11,12 @@ import actions from '../action/index';
 import globalConfig from '../config';
 import PopularItem from '../common/PopularItem';
 import NavigationBar from '../common/NavigationBar';
+import FavoriteDao from "../expand/dao/FavoriteDao";
+import FavoriteUtil from "../util/FavoriteUtil";
+import {FLAG_STORAGE} from "../expand/dao/DataStore";
 
 const THEME_COLOR = '#678';
+const favoriteDao = new FavoriteDao(FLAG_STORAGE.flag_popular);
 
 type Props = {};
 export default class PopularPage extends Component<Props> {
@@ -103,11 +107,11 @@ class PopularTab extends Component<Props> {
     const store = this._store();
     const url = this.genFetchUrl(this.storeName);
     if (loadMore) {
-      onLoadMorePopular(this.storeName, ++store.pageIndex, pageSize, store.items, callback => {
+      onLoadMorePopular(this.storeName, ++store.pageIndex, pageSize, store.items, favoriteDao, callback => {
         this.refs.toast.show('No More');
       })
     } else {
-      onRefreshPopular(this.storeName, url, pageSize);
+      onRefreshPopular(this.storeName, url, pageSize, favoriteDao);
     }
   }
 
@@ -126,6 +130,7 @@ class PopularTab extends Component<Props> {
           projectModel: item
         }, 'DetailPage')
       }}
+      onFavorite={(item, isFavorite) => FavoriteUtil.onFavorite(favoriteDao, item, isFavorite, FLAG_STORAGE.flag_popular)}
     />
   }
 
@@ -212,8 +217,8 @@ const mapStateToProps = state => ({
   popular: state.popular
 });
 const mapDispatchToProps = dispatch => ({
-  onRefreshPopular: (storeName, url, pageSize) => dispatch(actions.onRefreshPopular(storeName, url, pageSize)),
-  onLoadMorePopular: (storeName, pageIndex, pageSize, items, callBack) => dispatch(actions.onLoadMorePopular(storeName, pageIndex, pageSize, items, callBack)),
+  onRefreshPopular: (storeName, url, pageSize, favoriteDao) => dispatch(actions.onRefreshPopular(storeName, url, pageSize, favoriteDao)),
+  onLoadMorePopular: (storeName, pageIndex, pageSize, items, favoriteDao, callBack) => dispatch(actions.onLoadMorePopular(storeName, pageIndex, pageSize, items, favoriteDao, callBack)),
 });
 
 const PopularTabPage = connect(mapStateToProps, mapDispatchToProps)(PopularTab);

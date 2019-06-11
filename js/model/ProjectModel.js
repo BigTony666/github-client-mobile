@@ -1,5 +1,5 @@
-// Item Model
-// TODO: fix this
-export default function ProjectModel(item) {
+// Item Model with Favorite State
+export default function ProjectModel(item, isFavorite) {
     this.item = item;
+    this.isFavorite = isFavorite;
 }

@@ -1,7 +1,7 @@
 import ProjectModel from "../model/ProjectModel";
-// import Utils from "../util/Utils";
+import Utils from "../util/Utils";
 
-export function handleData(actionType, dispatch, storeName, data, pageSize, params) {
+export function handleData(actionType, dispatch, storeName, data, pageSize, params, favoriteDao) {
     let fixItems = [];
     if (data && data.data) {
         if (Array.isArray(data.data)) {
@@ -13,7 +13,7 @@ export function handleData(actionType, dispatch, storeName, data, pageSize, para
 
     // First time load
     let showItems = pageSize > fixItems.length ? fixItems : fixItems.slice(0, pageSize);
-    _projectModels(showItems, projectModels => {
+    _projectModels(showItems, favoriteDao, projectModels => {
         dispatch({
             type: actionType,
             items: fixItems,
@@ -25,11 +25,16 @@ export function handleData(actionType, dispatch, storeName, data, pageSize, para
     });
 }
 
-export function _projectModels(showItems, callback) {
+export async function _projectModels(showItems, favoriteDao, callback) {
     let keys = [];
+    try {
+        keys = await favoriteDao.getFavoriteKeys();
+    } catch (e) {
+        console.log(e);
+    }
     let projectModels = [];
     for (let i = 0, len = showItems.length; i < len; i++) {
-        projectModels.push(new ProjectModel(showItems[i]));
+        projectModels.push(new ProjectModel(showItems[i], Utils.checkFavorite(showItems[i], keys)));
     }
     doCallBack(callback, projectModels);
 }
