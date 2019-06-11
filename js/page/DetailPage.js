@@ -8,6 +8,7 @@ import globalConfig from '../config';
 import NavigationUtil from "../navigator/NavigationUtil";
 import ViewUtil from '../util/ViewUtil';
 import BackPressComponent from "../common/BackPressComponent";
+import FavoriteDao from "../expand/dao/FavoriteDao";
 
 const THEME_COLOR = '#678';
 
@@ -17,12 +18,14 @@ export default class DetailPage extends Component<Props> {
     super(props);
     this.params = this.props.navigation.state.params;
     const { projectModel, flag } = this.params;
+    this.favoriteDao = new FavoriteDao(flag);
     this.url = projectModel.item.html_url || globalConfig.GITHUB_PREFIX_URL + projectModel.item.fullName;
     const title = projectModel.item.full_name || projectModel.item.fullName;
     this.state = {
       title: title,
       url: this.url,
       canGoBack: false,
+      isFavorite: projectModel.isFavorite,
     }
     this.backPress = new BackPressComponent({ backPress: () => this.onBackPress() });
   }
@@ -49,14 +52,25 @@ export default class DetailPage extends Component<Props> {
     }
   }
 
+  onFavoriteButtonClick() {
+    const { projectModel, callback } = this.params;
+    const isFavorite = projectModel.isFavorite = !projectModel.isFavorite;
+    callback(isFavorite);
+    this.setState({
+      isFavorite: isFavorite,
+    });
+    let key = projectModel.item.fullName ? projectModel.item.fullName : projectModel.item.id.toString();
+    if (projectModel.isFavorite) {
+      this.favoriteDao.saveFavoriteItem(key, JSON.stringify(projectModel.item));
+    } else {
+      this.favoriteDao.removeFavoriteItem(key);
+    }
+  }
+
   renderRightButton() {
     return (<View style={{ flexDirection: 'row' }}>
       <TouchableOpacity
-        onPress={
-          () => {
-            // this.onFavoriteButtonClick()
-          }
-        }>
+        onPress={() => this.onFavoriteButtonClick()}>
         <FontAwesome
           name={this.state.isFavorite ? 'star' : 'star-o'}
           size={20}
