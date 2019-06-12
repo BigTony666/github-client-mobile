@@ -9,8 +9,7 @@ import NavigationUtil from "../navigator/NavigationUtil";
 import ViewUtil from '../util/ViewUtil';
 import BackPressComponent from "../common/BackPressComponent";
 import FavoriteDao from "../expand/dao/FavoriteDao";
-
-const THEME_COLOR = '#678';
+import SafeAreaViewPlus from "../common/SafeAreaViewPlus";
 
 type Props = {};
 export default class DetailPage extends Component<Props> {
@@ -95,17 +94,20 @@ export default class DetailPage extends Component<Props> {
   }
 
   render() {
+    const { theme } = this.params;
     const titleLayoutStyle = this.state.title.length > 20 ? { paddingRight: 30 } : null;
     let navigationBar = <NavigationBar
       leftButton={ViewUtil.getLeftBackButton(() => this.onBack())}
       titleLayoutStyle={titleLayoutStyle}
       title={this.state.title}
-      style={{ backgroundColor: THEME_COLOR }}
+      style={theme.styles.navBar}
       rightButton={this.renderRightButton()}
     />;
 
     return (
-      <View style={styles.container}>
+      <SafeAreaViewPlus
+        topColor={theme.themeColor}
+      >
         {navigationBar}
         <WebView
           ref={webView => this.webView = webView}
@@ -113,14 +115,7 @@ export default class DetailPage extends Component<Props> {
           onNavigationStateChange={e => this.onNavigationStateChange(e)}
           source={{ uri: this.state.url }}
         />
-      </View>
+      </SafeAreaViewPlus>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginTop: DeviceInfo.isIPhoneX_deprecated ? 30 : 0,
-  },
-});

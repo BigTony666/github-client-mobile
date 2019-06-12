@@ -1,6 +1,8 @@
-import React, {Component} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import React, { Component } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 import NavigationUtil from '../navigator/NavigationUtil';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { MORE_MENU } from "../common/MORE_MENU";
 
 type Props = {};
 export default class WelcomePage extends Component<Props> {
@@ -9,7 +11,7 @@ export default class WelcomePage extends Component<Props> {
       NavigationUtil.resetToHomePage({
         navigation: this.props.navigation
       })
-    }, 500);
+    }, 1000);
   }
 
   componentWillUnmount() {
@@ -19,7 +21,15 @@ export default class WelcomePage extends Component<Props> {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}> WelcomePage </Text>
+        <Ionicons
+          name={MORE_MENU.About.icon}
+          size={100}
+          style={{
+            marginRight: 10,
+            color: '#000',
+          }}
+        />
+        <Text style={styles.welcome}> Stay Hungry. Stay Foolish. </Text>
       </View>
     );
   }

@@ -15,24 +15,26 @@ import FavoriteDao from "../expand/dao/FavoriteDao";
 import FavoriteUtil from "../util/FavoriteUtil";
 import { FLAG_STORAGE } from "../expand/dao/DataStore";
 import events from '../event/types';
+import { FLAG_LANGUAGE } from "../expand/dao/LanguageDao";
 
-const THEME_COLOR = '#678';
 const favoriteDao = new FavoriteDao(FLAG_STORAGE.flag_popular);
 
 type Props = {};
-export default class PopularPage extends Component<Props> {
+class PopularPage extends Component<Props> {
   constructor(props) {
     super(props);
-    this.tabNames = ['Java', 'Android', 'JavaScript', 'iOS', 'React', 'React Native'];
+    const { onLoadLanguage } = this.props;
+    onLoadLanguage(FLAG_LANGUAGE.flag_key);
   }
 
   _genTabs() {
     const tabs = {};
-    this.tabNames.forEach((item, index) => {
+    const { keys, theme } = this.props;
+    keys.forEach((item, index) => {
       tabs[`tab${index}`] = {
-        screen: props => <PopularTabPage {...props} tabLabel={item} />,
+        screen: props => <PopularTabPage {...props} tabLabel={item.name} theme={theme} />,
         navigationOptions: {
-          title: item,
+          title: item.name,
         },
       }
     });
@@ -40,42 +42,53 @@ export default class PopularPage extends Component<Props> {
   }
 
   render() {
+    const { keys, theme } = this.props;
     let statusBar = {
-      backgroundColor: THEME_COLOR,
+      backgroundColor: theme.themeColor,
       barStyle: 'light-content',
     }
 
     let navigationBar = <NavigationBar
       title={'Popular'}
       statusBar={statusBar}
-      style={{ backgroundColor: THEME_COLOR }}
+      style={theme.styles.navBar}
     />;
 
-    const TabNavigator = createMaterialTopTabNavigator(
-      this._genTabs(),
-      {
+    const TabNavigator = keys.length ? createMaterialTopTabNavigator(
+      this._genTabs(), {
         tabBarOptions: {
           tabStyle: styles.tabStyle,
           upperCaseLabel: false,
           scrollEnabled: true,
           style: {
-            backgroundColor: '#678',
+            backgroundColor: theme.themeColor,
             height: 30
           },
           indicatorStyle: styles.indicatorStyle,
           labelStyle: styles.labelStyle,
-        }
+        },
+        lazy: true
       }
-    );
+    ) : null;
 
     return (
-      <View style={{ flex: 1, marginTop: DeviceInfo.isIPhoneX_deprecated ? 30 : 0 }}>
+      <View style={styles.container}>
         {navigationBar}
-        <TabNavigator />
+        {TabNavigator && <TabNavigator />}
       </View>
     );
   }
 }
+
+const mapPopularStateToProps = state => ({
+  keys: state.language.keys,
+  theme: state.theme.theme,
+});
+const mapPopularDispatchToProps = dispatch => ({
+  onLoadLanguage: (flag) => dispatch(actions.onLoadLanguage(flag))
+});
+
+export default connect(mapPopularStateToProps, mapPopularDispatchToProps)(PopularPage);
 
 const pageSize = 10;
 class PopularTab extends Component<Props> {
@@ -146,10 +159,13 @@ class PopularTab extends Component<Props> {
 
   renderItem(data) {
     const item = data.item;
+    const { theme } = this.props;
     return <PopularItem
       projectModel={item}
+      theme={theme}
       onSelect={(callback) => {
         NavigationUtil.goPage({
+          theme,
           projectModel: item,
           flag: FLAG_STORAGE.flag_popular,
           callback,
@@ -171,6 +187,7 @@ class PopularTab extends Component<Props> {
 
   render() {
     let store = this._store();
+    const {theme}=this.props;
     return (
       <View style={styles.container}>
         <FlatList
@@ -180,11 +197,11 @@ class PopularTab extends Component<Props> {
           refreshControl={
             <RefreshControl
               title={'Loading'}
-              titleColor={THEME_COLOR}
-              colors={[THEME_COLOR]}
+              titleColor={theme.themeColor}
+              colors={[theme.themeColor]}
               refreshing={store.isLoading}
               onRefresh={() => this.loadData()}
-              tintColor={THEME_COLOR}
+              tintColor={theme.themeColor}
             />
           }
           ListFooterComponent={() => this.genIndicator()}
@@ -212,6 +229,17 @@ class PopularTab extends Component<Props> {
   }
 }
 
+const mapStateToProps = state => ({
+  popular: state.popular
+});
+const mapDispatchToProps = dispatch => ({
+  onRefreshPopular: (storeName, url, pageSize, favoriteDao) => dispatch(actions.onRefreshPopular(storeName, url, pageSize, favoriteDao)),
+  onLoadMorePopular: (storeName, pageIndex, pageSize, items, favoriteDao, callback) => dispatch(actions.onLoadMorePopular(storeName, pageIndex, pageSize, items, favoriteDao, callback)),
+  onFlushPopularFavorite: (storeName, pageIndex, pageSize, items, favoriteDao) => dispatch(actions.onFlushPopularFavorite(storeName, pageIndex, pageSize, items, favoriteDao)),
+});
+
+const PopularTabPage = connect(mapStateToProps, mapDispatchToProps)(PopularTab);
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -236,14 +264,3 @@ const styles = StyleSheet.create({
     margin: 10
   }
 });
-
-const mapStateToProps = state => ({
-  popular: state.popular
-});
-const mapDispatchToProps = dispatch => ({
-  onRefreshPopular: (storeName, url, pageSize, favoriteDao) => dispatch(actions.onRefreshPopular(storeName, url, pageSize, favoriteDao)),
-  onLoadMorePopular: (storeName, pageIndex, pageSize, items, favoriteDao, callback) => dispatch(actions.onLoadMorePopular(storeName, pageIndex, pageSize, items, favoriteDao, callback)),
-  onFlushPopularFavorite: (storeName, pageIndex, pageSize, items, favoriteDao) => dispatch(actions.onFlushPopularFavorite(storeName, pageIndex, pageSize, items, favoriteDao)),
-});
-
-const PopularTabPage = connect(mapStateToProps, mapDispatchToProps)(PopularTab);

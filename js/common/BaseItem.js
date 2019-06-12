@@ -1,7 +1,7 @@
-import React, {Component} from 'react';
-import {Image, StyleSheet, Text, TouchableOpacity, View,} from 'react-native';
+import React, { Component } from 'react';
+import { Image, StyleSheet, Text, TouchableOpacity, View, } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import {PropTypes} from 'prop-types';
+import { PropTypes } from 'prop-types';
 
 export default class BaseItem extends Component {
     static propTypes = {
@@ -19,7 +19,10 @@ export default class BaseItem extends Component {
 
     /**
      * https://github.com/reactjs/rfcs/blob/master/text/0006-static-lifecycle-methods.md
-     * componentWillReceiveProps will not be used in new React version
+     * componentWillReceiveProps will not be used
+     * @param nextProps
+     * @param prevState
+     * @returns {*}
      */
     static getDerivedStateFromProps(nextProps, prevState) {
         const isFavorite = nextProps.projectModel.isFavorite;
@@ -35,7 +38,7 @@ export default class BaseItem extends Component {
         this.props.projectModel.isFavorite = isFavorite;
         this.setState({
             isFavorite: isFavorite,
-        });
+        })
     }
 
     onItemClick() {
@@ -46,19 +49,19 @@ export default class BaseItem extends Component {
 
     onPressFavorite() {
         this.setFavoriteState(!this.state.isFavorite);
-        this.props.onFavorite(this.props.projectModel.item, !this.state.isFavorite);
+        this.props.onFavorite(this.props.projectModel.item, !this.state.isFavorite)
     }
 
     _favoriteIcon() {
-        // const {theme} = this.props;
+        const { theme } = this.props;
         return <TouchableOpacity
-            style={{padding: 6}}
+            style={{ padding: 6 }}
             underlayColor='transparent'
             onPress={() => this.onPressFavorite()}>
             <FontAwesome
                 name={this.state.isFavorite ? 'star' : 'star-o'}
                 size={26}
-                style={{color: '#678'}}
+                style={{ color: theme.themeColor }}
             />
         </TouchableOpacity>
     }
