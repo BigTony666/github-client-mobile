@@ -1,7 +1,7 @@
 import ProjectModel from "../model/ProjectModel";
 import Utils from "../util/Utils";
 
-export function handleData(actionType, dispatch, storeName, data, pageSize, params, favoriteDao) {
+export function handleData(actionType, dispatch, storeName, data, pageSize, favoriteDao, params) {
     let fixItems = [];
     if (data && data.data) {
         if (Array.isArray(data.data)) {
@@ -10,8 +10,6 @@ export function handleData(actionType, dispatch, storeName, data, pageSize, para
             fixItems = data.data.items;
         }
     }
-
-    // First time load
     let showItems = pageSize > fixItems.length ? fixItems : fixItems.slice(0, pageSize);
     _projectModels(showItems, favoriteDao, projectModels => {
         dispatch({

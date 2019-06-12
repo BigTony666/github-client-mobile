@@ -1,10 +1,13 @@
-import { onThemeChange } from './theme';
+import { onThemeChange, onShowCustomThemeView, onThemeInit } from './theme';
 import { onRefreshPopular, onLoadMorePopular, onFlushPopularFavorite } from './popular';
 import { onRefreshTrending, onLoadMoreTrending, onFlushTrendingFavorite } from './trending';
-import { onLoadFavoriteData } from './favorite'
+import { onLoadFavoriteData } from './favorite';
+import { onLoadLanguage } from './language';
 
 export default {
   onThemeChange,
+  onShowCustomThemeView,
+  onThemeInit,
   onRefreshPopular,
   onLoadMorePopular,
   onRefreshTrending,
@@ -12,4 +15,5 @@ export default {
   onFlushTrendingFavorite,
   onLoadFavoriteData,
   onFlushPopularFavorite,
+  onLoadLanguage,
 }
