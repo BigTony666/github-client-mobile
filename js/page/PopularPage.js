@@ -170,7 +170,6 @@ class PopularTab extends Component<Props> {
   }
 
   render() {
-    const { popular } = this.props;
     let store = this._store();
     return (
       <View style={styles.container}>

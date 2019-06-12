@@ -16,7 +16,7 @@ import TrendingDialog, { TimeSpans } from '../common/TrendingDialog';
 import events from '../event/types';
 import FavoriteDao from "../expand/dao/FavoriteDao";
 import FavoriteUtil from "../util/FavoriteUtil";
-import {FLAG_STORAGE} from "../expand/dao/DataStore";
+import { FLAG_STORAGE } from "../expand/dao/DataStore";
 
 const favoriteDao = new FavoriteDao(FLAG_STORAGE.flag_trending);
 const THEME_COLOR = '#678';
@@ -81,7 +81,7 @@ export default class TrendingPage extends Component<Props> {
   }
 
   _tabNav() {
-    if(!this.tabNav) { // enhance performance
+    if (!this.tabNav) { // enhance performance
       this.tabNav = createMaterialTopTabNavigator(
         this._genTabs(),
         {
@@ -95,7 +95,7 @@ export default class TrendingPage extends Component<Props> {
             },
             indicatorStyle: styles.indicatorStyle,
             labelStyle: styles.labelStyle,
-          }
+          },
         }
       );
     }
@@ -134,19 +134,39 @@ class TrendingTab extends Component<Props> {
     const { tabLabel, timeSpan } = this.props;
     this.storeName = tabLabel;
     this.timeSpan = timeSpan;
+    this.isFavoriteChanged = false;
   }
 
   componentDidMount() {
     this.loadData();
+
     this.timeSpanChangeListener = DeviceEventEmitter.addListener(events.EVENT_TYPE_TIME_SPAN_CHANGE, (timeSpan) => {
       this.timeSpan = timeSpan;
       this.loadData();
+    });
+
+    this.favoriteChangeListener = DeviceEventEmitter.addListener(events.FAVORITE_CHANGED_TRENDING, () => {
+      this.isFavoriteChanged = true;
+    });
+
+    this.bottomTabSelectListener = DeviceEventEmitter.addListener(events.BOTTOM_TAB_SELECT, (data) => {
+      if (data.to === 1 && this.isFavoriteChanged) {
+        this.loadData(null, true);
+      }
     });
   }
 
   componentWillUnmount() {
     if (this.timeSpanChangeListener) {
       this.timeSpanChangeListener.remove();
+    }
+
+    if (this.favoriteChangeListener) {
+      this.favoriteChangeListener.remove();
+    }
+
+    if (this.bottomTabSelectListener) {
+      this.bottomTabSelectListener.remove();
     }
   }
 
@@ -164,16 +184,19 @@ class TrendingTab extends Component<Props> {
     return store;
   }
 
-  loadData(loadMore) {
-    const { onRefreshTrending, onLoadMoreTrending } = this.props;
+  loadData(loadMore, refreshFavorite) {
+    const { onRefreshTrending, onLoadMoreTrending, onFlushTrendingFavorite } = this.props;
     const store = this._store();
     const url = this.genFetchUrl(this.storeName);
     if (loadMore) {
-      onLoadMoreTrending(this.storeName, ++store.pageIndex, pageSize, store.items, callback => {
+      onLoadMoreTrending(this.storeName, ++store.pageIndex, pageSize, store.items, favoriteDao, callback => {
         this.refs.toast.show('No More');
       })
+    } else if (refreshFavorite) {
+      onFlushTrendingFavorite(this.storeName, store.pageIndex, pageSize, store.items, favoriteDao);
+      this.isFavoriteChanged = false;
     } else {
-      onRefreshTrending(this.storeName, url, pageSize);
+      onRefreshTrending(this.storeName, url, pageSize, favoriteDao);
     }
   }
 
@@ -208,7 +231,6 @@ class TrendingTab extends Component<Props> {
   }
 
   render() {
-    const { popular } = this.props;
     let store = this._store();
     return (
       <View style={styles.container}>
@@ -281,7 +303,8 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = dispatch => ({
   onRefreshTrending: (storeName, url, pageSize, favoriteDao) => dispatch(actions.onRefreshTrending(storeName, url, pageSize, favoriteDao)),
-  onLoadMoreTrending: (storeName, pageIndex, pageSize, items, favoriteDao, callBack) => dispatch(actions.onLoadMoreTrending(storeName, pageIndex, pageSize, items, favoriteDao, callBack)),
+  onLoadMoreTrending: (storeName, pageIndex, pageSize, items, favoriteDao, callback) => dispatch(actions.onLoadMoreTrending(storeName, pageIndex, pageSize, items, favoriteDao, callback)),
+  onFlushTrendingFavorite: (storeName, pageIndex, pageSize, items, favoriteDao) => dispatch(actions.onFlushTrendingFavorite(storeName, pageIndex, pageSize, items, favoriteDao)),
 });
 
 const TrendingTabPage = connect(mapStateToProps, mapDispatchToProps)(TrendingTab);
