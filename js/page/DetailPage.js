@@ -76,12 +76,12 @@ export default class DetailPage extends Component<Props> {
           style={{ color: 'white', marginRight: 10 }}
         />
       </TouchableOpacity>
-      {ViewUtil.getShareButton(() => {
-        // let shareApp = share.share_app;
-        // ShareUtil.shareboard(shareApp.content, shareApp.imgUrl, this.url, shareApp.title, [0, 1, 2, 3, 4, 5, 6], (code, message) => {
-        //   console.log("result:" + code + message);
-        // });
-      })}
+      {/* {ViewUtil.getShareButton(() => {
+        let shareApp = share.share_app;
+        ShareUtil.shareboard(shareApp.content, shareApp.imgUrl, this.url, shareApp.title, [0, 1, 2, 3, 4, 5, 6], (code, message) => {
+          console.log("result:" + code + message);
+        });
+      })} */}
     </View>
     )
   }
