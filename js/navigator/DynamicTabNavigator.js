@@ -8,7 +8,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { BottomTabBar } from 'react-navigation-tabs';
 
 import PopularPage from '../page/PopularPage';
-// import TrendingPage from '../page/TrendingPage';
+import TrendingPage from '../page/TrendingPage';
 import SearchPage from '../page/SearchPage';
 import FavoritePage from '../page/FavoritePage';
 import MyPage from '../page/MyPage';

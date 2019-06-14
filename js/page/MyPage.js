@@ -10,10 +10,13 @@ import NavigationUtil from "../navigator/NavigationUtil";
 import {FLAG_LANGUAGE} from "../expand/dao/LanguageDao";
 import actions from "../action";
 import NavigationBar from '../common/NavigationBar';
+import DataStore from '../expand/dao/DataStore';
 
 type Props = {};
 class MyPage extends Component<Props> {
+
   onClick(menu) {
+    let dataStore = new DataStore();
     const { theme } = this.props;
     let RouteName, params = { theme };
     switch (menu) {
@@ -50,6 +53,9 @@ class MyPage extends Component<Props> {
         break;
       case MORE_MENU.About_Author:
         RouteName = 'AboutMePage';
+        break;
+      case MORE_MENU.CleanCache:
+        dataStore.clearAsyncStorage();
         break;
     }
     if (RouteName) {
@@ -121,6 +127,8 @@ class MyPage extends Component<Props> {
           {this.getItem(MORE_MENU.Custom_Theme)}
           <View style={GlobalStyles.line} />
           {this.getItem(MORE_MENU.CodePush)}
+          <View style={GlobalStyles.line} />
+          {this.getItem(MORE_MENU.CleanCache)}
         </ScrollView>
       </View>
     );

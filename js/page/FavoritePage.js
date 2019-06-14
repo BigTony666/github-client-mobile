@@ -20,7 +20,6 @@ type Props = {};
 class FavoritePage extends Component<Props> {
   constructor(props) {
     super(props);
-    this.tabNames = ['Popular', 'Trending'];
   }
 
   render() {

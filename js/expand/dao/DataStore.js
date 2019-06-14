@@ -98,4 +98,8 @@ export default class DataStore {
       (currentDate.getDate() === targetDate.getDate()) &&
       (currentDate.getHours() - targetDate.getHours() < 1);
   }
+
+  clearAsyncStorage = async() => {
+    AsyncStorage.clear();
+  }
 }
