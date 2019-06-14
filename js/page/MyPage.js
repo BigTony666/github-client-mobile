@@ -91,7 +91,7 @@ class MyPage extends Component<Props> {
                   color: theme.themeColor,
                 }}
               />
-              <Text>GitHub Popular</Text>
+              <Text>GitHub Client</Text>
             </View>
           </TouchableOpacity>
           <View style={GlobalStyles.line} />

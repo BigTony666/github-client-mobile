@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, DeviceEventEmitter, FlatList, RefreshControl, ActivityIndicator, DeviceInfo } from 'react-native';
+import { StyleSheet, Text, View, DeviceEventEmitter, FlatList, RefreshControl, ActivityIndicator, TouchableOpacity } from 'react-native';
 import {
   createMaterialTopTabNavigator
 } from 'react-navigation';
 import NavigationUtil from '../navigator/NavigationUtil';
 import { connect } from 'react-redux';
 import Toast from 'react-native-easy-toast';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import actions from '../action/index';
 import globalConfig from '../config';
@@ -41,6 +42,27 @@ class PopularPage extends Component<Props> {
     return tabs;
   }
 
+  renderRightButton() {
+    const { theme } = this.props;
+    return <TouchableOpacity
+      onPress={() => {
+        // AnalyticsUtil.track("SearchButtonClick");
+        NavigationUtil.goPage({ theme }, 'SearchPage')
+      }}
+    >
+      <View style={{ padding: 5, marginRight: 8 }}>
+        <Ionicons
+          name={'ios-search'}
+          size={24}
+          style={{
+            marginRight: 8,
+            alignSelf: 'center',
+            color: 'white',
+          }} />
+      </View>
+    </TouchableOpacity>
+  }
+
   render() {
     const { keys, theme } = this.props;
     let statusBar = {
@@ -52,6 +74,7 @@ class PopularPage extends Component<Props> {
       title={'Popular'}
       statusBar={statusBar}
       style={theme.styles.navBar}
+      rightButton={this.renderRightButton()}
     />;
 
     const TabNavigator = keys.length ? createMaterialTopTabNavigator(
@@ -187,7 +210,7 @@ class PopularTab extends Component<Props> {
 
   render() {
     let store = this._store();
-    const {theme}=this.props;
+    const { theme } = this.props;
     return (
       <View style={styles.container}>
         <FlatList

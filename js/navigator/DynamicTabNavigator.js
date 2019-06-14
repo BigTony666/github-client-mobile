@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
-import {DeviceEventEmitter} from 'react-native';
+import { DeviceEventEmitter } from 'react-native';
 import { createBottomTabNavigator } from "react-navigation";
 import { connect } from 'react-redux';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { BottomTabBar } from 'react-navigation-tabs';
 
 import PopularPage from '../page/PopularPage';
-import TrendingPage from '../page/TrendingPage';
+// import TrendingPage from '../page/TrendingPage';
+import SearchPage from '../page/SearchPage';
 import FavoritePage from '../page/FavoritePage';
 import MyPage from '../page/MyPage';
 import events from '../event/types';
@@ -28,13 +30,26 @@ const TABS = {
       ),
     }
   },
-  TrendingPage: {
-    screen: TrendingPage,
+  // TrendingPage: {
+  //   screen: TrendingPage,
+  //   navigationOptions: {
+  //     tabBarLabel: "Trending",
+  //     tabBarIcon: ({ tintColor, focused }) => (
+  //       <MaterialIcons
+  //         name={'trending-up'}
+  //         size={26}
+  //         style={{ color: tintColor }}
+  //       />
+  //     ),
+  //   }
+  // },
+  SearchPage: {
+    screen: SearchPage,
     navigationOptions: {
       tabBarLabel: "Trending",
       tabBarIcon: ({ tintColor, focused }) => (
-        <MaterialIcons
-          name={'trending-up'}
+        <Ionicons
+          name={'ios-search'}
           size={26}
           style={{ color: tintColor }}
         />
@@ -79,8 +94,8 @@ class DynamicTabNavigator extends Component<Props> {
     if (this.Tabs) {
       return this.Tabs;
     }
-    const { PopularPage, TrendingPage, FavoritePage, MyPage } = TABS;
-    const tabs = { PopularPage, TrendingPage, FavoritePage, MyPage };
+    const { PopularPage, SearchPage, FavoritePage, MyPage } = TABS;
+    const tabs = { PopularPage, SearchPage, FavoritePage, MyPage };
     PopularPage.navigationOptions.tabBarLabel = 'Popular';
     return this.Tabs = createBottomTabNavigator(
       tabs,

@@ -4,6 +4,7 @@ import popularReducer from './popular';
 import trendingReducer from './trending';
 import favoriteReducer from './favorite';
 import languageReducer from './language';
+import searchReducer from './search';
 import {rootCom, RootNavigator} from '../navigator/AppNavigators';
 
 const navState = RootNavigator.router.getStateForAction(RootNavigator.router.getActionForPathAndParams(rootCom));
@@ -20,6 +21,7 @@ const index = combineReducers({
   trending: trendingReducer,
   favorite: favoriteReducer,
   language: languageReducer,
+  search: searchReducer,
 });
 
 export default index;
