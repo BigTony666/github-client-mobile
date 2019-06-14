@@ -1,3 +1,4 @@
 <resources>
+	<string moduleConfig="true" name="reactNativeCodePush_androidDeploymentKey">JXttmETMTgGYswIT4BpeED8H2Ykf70f000c5-dd1d-4b5e-8810-79e26e005e59</string>
     <string name="app_name">trend</string>
 </resources>

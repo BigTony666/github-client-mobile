@@ -12,6 +12,7 @@ import DetailPage from '../page/DetailPage';
 import CustomKeyPage from '../page/CustomKeyPage';
 import SortKeyPage from '../page/SortKeyPage';
 import SearchPage from '../page/SearchPage';
+import CodePushPage from '../page/CodePushPage';
 
 export const rootCom = 'Init'; // root navigator
 
@@ -56,6 +57,12 @@ const MainNavigator = createStackNavigator({
   },
   SearchPage: {
     screen: SearchPage,
+    navigationOptions: {
+      header: null,
+    }
+  },
+  CodePushPage: {
+    screen: CodePushPage,
     navigationOptions: {
       header: null,
     }

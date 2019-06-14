@@ -120,9 +120,6 @@ class MyPage extends Component<Props> {
           {/*Custom Theme*/}
           {this.getItem(MORE_MENU.Custom_Theme)}
           <View style={GlobalStyles.line} />
-          {/*Feedback*/}
-          {this.getItem(MORE_MENU.Feedback)}
-          <View style={GlobalStyles.line} />
           {this.getItem(MORE_MENU.CodePush)}
         </ScrollView>
       </View>
